@@ -14,7 +14,7 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, signInWithProvider } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -75,6 +75,14 @@ const Auth = () => {
           <CardDescription>Discover amazing restaurants near you</CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <Button variant="outline" type="button" onClick={() => signInWithProvider('google')}>
+              Continue with Google
+            </Button>
+            <Button variant="outline" type="button" onClick={() => signInWithProvider('apple')}>
+              Continue with Apple
+            </Button>
+          </div>
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Sign In</TabsTrigger>

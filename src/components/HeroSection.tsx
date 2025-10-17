@@ -2,8 +2,10 @@ import { Search, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-food.jpg";
+import { useI18n } from "@/i18n";
 
 const HeroSection = () => {
+  const { t } = useI18n?.() ?? { t: (s: any) => s } as any;
   return (
     <section className="relative h-[500px] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -20,10 +22,10 @@ const HeroSection = () => {
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center space-y-8">
         <div className="space-y-4">
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-            Discover World Flavors
+            {t('discover_world_flavors')}
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Explore new restaurants and international cuisines near you
+            {t('explore_nearby')}
           </p>
         </div>
         

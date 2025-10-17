@@ -124,6 +124,14 @@ const Preferences = () => {
     setPreferences({ ...preferences, selectedCuisines: newMap });
   };
 
+  const recommendScore = (c: any) => {
+    const sel = preferences.selectedCuisines.get(c.id) ?? 0;
+    const vegBoost = preferences.isVegetarian || preferences.isVegan ? 0.5 : 0;
+    const spiceDiff = Math.abs((preferences.spiceLevel ?? 3) - 3);
+    const spiceBoost = 0.2 * (3 - spiceDiff);
+    return sel + vegBoost + spiceBoost;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -189,7 +197,10 @@ const Preferences = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {cuisines.map((cuisine) => (
+                {cuisines
+                  .slice()
+                  .sort((a, b) => recommendScore(b) - recommendScore(a))
+                  .map((cuisine) => (
                   <Button
                     key={cuisine.id}
                     variant={
