@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,11 +9,14 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import '@/i18n';
+import { useTranslation } from 'react-i18next';
 
 const Preferences = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [cuisines, setCuisines] = useState<any[]>([]);
@@ -23,6 +26,15 @@ const Preferences = () => {
     spiceLevel: 3,
     selectedCuisines: new Map(),
   });
+
+  const preferredCuisineNames = useMemo(() => {
+    const map = new Map<string, number>();
+    cuisines.forEach((c) => {
+      const level = preferences.selectedCuisines.get(c.id);
+      if (level) map.set(c.name, level);
+    });
+    return map;
+  }, [cuisines, preferences.selectedCuisines]);
 
   useEffect(() => {
     if (!user) {
@@ -135,7 +147,7 @@ const Preferences = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold mb-8">Taste Preferences</h1>
+        <h1 className="text-4xl font-bold mb-8">{t('tastePreferences')}</h1>
 
         <div className="space-y-6">
           <Card>

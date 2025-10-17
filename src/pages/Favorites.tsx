@@ -3,11 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import RestaurantCard from '@/components/RestaurantCard';
+import '@/i18n';
+import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 
 const Favorites = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -54,7 +57,7 @@ const Favorites = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold mb-8">Your Favorite Restaurants</h1>
+        <h1 className="text-4xl font-bold mb-8">{t('favorites')}</h1>
         
         {favorites.length === 0 ? (
           <div className="text-center py-12">
