@@ -1,7 +1,8 @@
-import { UtensilsCrossed, User, Heart, LogOut } from 'lucide-react';
+import { Moon, Sun, UtensilsCrossed, User, Heart, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from 'next-themes';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,10 +11,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { locales, useI18n } from '@/i18n';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
+  const { locale, setLocale } = useI18n();
 
   const handleSignOut = async () => {
     await signOut();
@@ -33,6 +37,27 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Toggle theme"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="rounded-full"
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">{locale?.toUpperCase?.() ?? 'EN'}</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {locales?.map?.((lc) => (
+                <DropdownMenuItem key={lc} onClick={() => setLocale?.(lc as any)}>
+                  {lc.toUpperCase()}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

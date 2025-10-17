@@ -42,7 +42,8 @@ export const useGeolocation = () => {
           error: error.message,
           loading: false,
         });
-      }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
   }, []);
 
