@@ -1,0 +1,76 @@
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+
+const resources = {
+  en: {
+    translation: {
+      brand: 'Taste the World',
+      tagline: 'Taste the World Near You',
+      discoverWorldFlavors: 'Discover World Flavors',
+      exploreNearYou: 'Explore new restaurants and international cuisines near you',
+      searchPlaceholder: 'Enter your location...',
+      search: 'Search',
+      newRestaurants: 'New Restaurants',
+      justOpened: 'Just opened in your area',
+      exploreCuisines: 'Explore International Cuisines',
+      filterByCuisine: 'Filter by your favorite cuisine type',
+      forYou: 'For You',
+      recommendedForYou: 'Handpicked recommendations based on your taste',
+      nearby: 'Nearby',
+      favorites: 'Favorites',
+      tastePreferences: 'Taste Preferences',
+      signIn: 'Sign In',
+      signOut: 'Sign Out',
+      theme: 'Theme',
+      light: 'Light',
+      dark: 'Dark',
+      language: 'Language',
+      english: 'English',
+      spanish: 'Español',
+      share: 'Share',
+      saved: 'Saved',
+      save: 'Save',
+      openNow: 'Open now',
+    },
+  },
+  es: {
+    translation: {
+      brand: 'Saborea el Mundo',
+      tagline: 'Saborea el mundo cerca de ti',
+      discoverWorldFlavors: 'Descubre Sabores del Mundo',
+      exploreNearYou: 'Explora nuevos restaurantes y cocinas internacionales cerca de ti',
+      searchPlaceholder: 'Ingresa tu ubicación...',
+      search: 'Buscar',
+      newRestaurants: 'Nuevos Restaurantes',
+      justOpened: 'Recién abiertos en tu zona',
+      exploreCuisines: 'Explora Cocinas Internacionales',
+      filterByCuisine: 'Filtra por tu tipo de cocina favorita',
+      forYou: 'Para ti',
+      recommendedForYou: 'Recomendaciones según tus gustos',
+      nearby: 'Cerca de ti',
+      favorites: 'Favoritos',
+      tastePreferences: 'Preferencias de sabor',
+      signIn: 'Iniciar sesión',
+      signOut: 'Cerrar sesión',
+      theme: 'Tema',
+      light: 'Claro',
+      dark: 'Oscuro',
+      language: 'Idioma',
+      english: 'English',
+      spanish: 'Español',
+      share: 'Compartir',
+      saved: 'Guardado',
+      save: 'Guardar',
+      openNow: 'Abierto ahora',
+    },
+  },
+};
+
+i18n.use(initReactI18next).init({
+  resources,
+  lng: 'en',
+  fallbackLng: 'en',
+  interpolation: { escapeValue: false },
+});
+
+export default i18n;

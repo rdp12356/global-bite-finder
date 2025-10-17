@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { UtensilsCrossed } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -64,6 +65,18 @@ const Auth = () => {
     setLoading(false);
   };
 
+  const signInWithProvider = async (provider: 'google' | 'apple') => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: window.location.origin } });
+      if (error) throw error;
+    } catch (err: any) {
+      toast({ variant: 'destructive', title: `Error with ${provider}`, description: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
       <Card className="w-full max-w-md">
@@ -108,6 +121,10 @@ const Auth = () => {
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? 'Signing in...' : 'Sign In'}
                 </Button>
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <Button type="button" variant="outline" onClick={() => signInWithProvider('google')}>Google</Button>
+                  <Button type="button" variant="outline" onClick={() => signInWithProvider('apple')}>Apple</Button>
+                </div>
               </form>
             </TabsContent>
             
@@ -150,6 +167,10 @@ const Auth = () => {
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? 'Creating account...' : 'Create Account'}
                 </Button>
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <Button type="button" variant="outline" onClick={() => signInWithProvider('google')}>Google</Button>
+                  <Button type="button" variant="outline" onClick={() => signInWithProvider('apple')}>Apple</Button>
+                </div>
               </form>
             </TabsContent>
           </Tabs>

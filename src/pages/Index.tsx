@@ -1,64 +1,28 @@
 import HeroSection from "@/components/HeroSection";
 import CategoryFilter from "@/components/CategoryFilter";
 import RestaurantCard from "@/components/RestaurantCard";
-import restaurant1 from "@/assets/restaurant-1.jpg";
-import restaurant2 from "@/assets/restaurant-2.jpg";
-import restaurant3 from "@/assets/restaurant-3.jpg";
-import restaurant4 from "@/assets/restaurant-4.jpg";
-import restaurant5 from "@/assets/restaurant-5.jpg";
-import restaurant6 from "@/assets/restaurant-6.jpg";
+import { useGeolocation } from "@/hooks/useGeolocation";
+import { useNearbyRestaurants } from "@/hooks/useNearbyRestaurants";
+import { useMemo, useState } from "react";
+import { getTopRecommendations } from "@/lib/recommendations";
+import { useTranslation } from "react-i18next";
+import MapView from "@/components/MapView";
+import { useTastePreferences } from "@/hooks/useTastePreferences";
 
 const Index = () => {
-  const newRestaurants = [
-    {
-      name: "Sakura Sushi Bar",
-      cuisine: "Japanese Cuisine",
-      rating: 4.8,
-      distance: "0.5 km",
-      image: restaurant1,
-      isNew: true,
-    },
-    {
-      name: "La Cucina Italiana",
-      cuisine: "Italian Cuisine",
-      rating: 4.7,
-      distance: "1.2 km",
-      image: restaurant2,
-      isNew: true,
-    },
-    {
-      name: "Taco Fiesta",
-      cuisine: "Mexican Cuisine",
-      rating: 4.6,
-      distance: "0.8 km",
-      image: restaurant3,
-      isNew: true,
-    },
-  ];
+  const { t } = useTranslation();
+  const { latitude, longitude, loading: geoLoading } = useGeolocation();
+  const [selectedCuisine, setSelectedCuisine] = useState<string>("All Cuisines");
+  const { data: nearby, loading: nearbyLoading } = useNearbyRestaurants({
+    latitude,
+    longitude,
+    cuisineKeyword: selectedCuisine,
+    radiusMeters: 3500,
+    fetchDetailsTopN: 6,
+  });
+  const { prefs } = useTastePreferences();
 
-  const allRestaurants = [
-    {
-      name: "Spice Route",
-      cuisine: "Indian Cuisine",
-      rating: 4.9,
-      distance: "1.5 km",
-      image: restaurant4,
-    },
-    {
-      name: "Mykonos Taverna",
-      cuisine: "Mediterranean Cuisine",
-      rating: 4.7,
-      distance: "2.1 km",
-      image: restaurant5,
-    },
-    {
-      name: "Café Parisien",
-      cuisine: "French Cuisine",
-      rating: 4.8,
-      distance: "1.8 km",
-      image: restaurant6,
-    },
-  ];
+  const recommendations = useMemo(() => getTopRecommendations(nearby, prefs, 6), [nearby, prefs]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -70,17 +34,24 @@ const Index = () => {
         {/* New Restaurants */}
         <section className="space-y-6">
           <div>
-            <h2 className="text-3xl font-bold text-foreground mb-2">
-              New Restaurants
-            </h2>
-            <p className="text-muted-foreground">
-              Just opened in your area
-            </p>
+            <h2 className="text-3xl font-bold text-foreground mb-2">{t('forYou')}</h2>
+            <p className="text-muted-foreground">{t('recommendedForYou')}</p>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {newRestaurants.map((restaurant) => (
-              <RestaurantCard key={restaurant.name} {...restaurant} />
+            {(geoLoading || nearbyLoading) && (
+              <div className="text-muted-foreground">Loading recommendations...</div>
+            )}
+            {!geoLoading && !nearbyLoading && recommendations.map((r) => (
+              <RestaurantCard
+                key={r.placeId}
+                name={r.name}
+                cuisine={r.cuisineHint || 'Various'}
+                rating={r.rating || 0}
+                distance={t('nearby') as string}
+                image={r.photoUrl || '/placeholder.svg'}
+                placeId={r.placeId}
+                reviewSnippet={r.reviews?.[0]?.text}
+              />
             ))}
           </div>
         </section>
@@ -88,20 +59,38 @@ const Index = () => {
         {/* Explore Cuisines */}
         <section className="space-y-6">
           <div>
-            <h2 className="text-3xl font-bold text-foreground mb-2">
-              Explore International Cuisines
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Filter by your favorite cuisine type
-            </p>
-            <CategoryFilter />
+            <h2 className="text-3xl font-bold text-foreground mb-2">{t('exploreCuisines')}</h2>
+            <p className="text-muted-foreground mb-6">{t('filterByCuisine')}</p>
+            <div onClick={(e) => {
+              const target = e.target as HTMLElement;
+              const text = target?.textContent?.trim();
+              if (text) setSelectedCuisine(text);
+            }}>
+              <CategoryFilter />
+            </div>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {allRestaurants.map((restaurant) => (
-              <RestaurantCard key={restaurant.name} {...restaurant} />
+            {(geoLoading || nearbyLoading) && (
+              <div className="text-muted-foreground">Loading nearby restaurants...</div>
+            )}
+            {!geoLoading && !nearbyLoading && nearby.map((r) => (
+              <RestaurantCard
+                key={r.placeId}
+                name={r.name}
+                cuisine={r.cuisineHint || 'Various'}
+                rating={r.rating || 0}
+                distance={t('nearby') as string}
+                image={r.photoUrl || '/placeholder.svg'}
+                placeId={r.placeId}
+                reviewSnippet={r.reviews?.[0]?.text}
+              />
             ))}
           </div>
+          {!geoLoading && !nearbyLoading && (
+            <div className="pt-8">
+              <MapView center={nearby[0]?.location} restaurants={nearby} />
+            </div>
+          )}
         </section>
       </main>
     </div>

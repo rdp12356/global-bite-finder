@@ -8,6 +8,9 @@ const categories = [
   "Indian",
   "Mediterranean",
   "French",
+  "Thai",
+  "Chinese",
+  "Korean",
 ];
 
 const CategoryFilter = () => {

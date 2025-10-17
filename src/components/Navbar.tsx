@@ -1,4 +1,4 @@
-import { UtensilsCrossed, User, Heart, LogOut } from 'lucide-react';
+import { UtensilsCrossed, User, Heart, LogOut, Globe, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -10,10 +10,36 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import '@/i18n';
+import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+  // initialize theme from localStorage
+  if (typeof document !== 'undefined') {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'dark') document.documentElement.classList.add('dark');
+    if (stored === 'light') document.documentElement.classList.remove('dark');
+  }
+
+  const toggleTheme = () => {
+    const root = document.documentElement;
+    if (root.classList.contains('dark')) {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  };
+
+  const toggleLanguage = () => {
+    const next = i18n.language === 'en' ? 'es' : 'en';
+    i18n.changeLanguage(next);
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -28,11 +54,17 @@ const Navbar = () => {
             <UtensilsCrossed className="w-5 h-5 text-primary-foreground" />
           </div>
           <h1 className="text-xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-            Taste the World
+            {t('brand')}
           </h1>
         </div>
 
         <div className="flex items-center gap-3">
+          <Button variant="outline" size="icon" className="rounded-full" onClick={toggleLanguage} title={t('language')}>
+            <Globe className="w-5 h-5" />
+          </Button>
+          <Button variant="outline" size="icon" className="rounded-full" onClick={toggleTheme} title={t('theme')}>
+            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </Button>
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -45,22 +77,22 @@ const Navbar = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate('/favorites')}>
                   <Heart className="w-4 h-4 mr-2" />
-                  Favorites
+                  {t('favorites')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/preferences')}>
                   <User className="w-4 h-4 mr-2" />
-                  Taste Preferences
+                  {t('tastePreferences')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
+                  {t('signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Button onClick={() => navigate('/auth')} size="sm">
-              Sign In
+              {t('signIn')}
             </Button>
           )}
         </div>
