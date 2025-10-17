@@ -6,17 +6,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { UtensilsCrossed } from 'lucide-react';
+import { UtensilsCrossed, Chrome, Apple } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const [socialLoading, setSocialLoading] = useState<'google' | 'apple' | null>(null);
+  const { signIn, signUp, signInWithGoogle, signInWithApple } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { toast: toastHook } = useToast();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,16 +28,9 @@ const Auth = () => {
     const { error } = await signIn(email, password);
 
     if (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error signing in',
-        description: error.message,
-      });
+      toast.error('Error signing in: ' + error.message);
     } else {
-      toast({
-        title: 'Welcome back!',
-        description: 'Successfully signed in.',
-      });
+      toast.success('Welcome back!');
       navigate('/');
     }
 
@@ -48,20 +44,35 @@ const Auth = () => {
     const { error } = await signUp(email, password, fullName);
 
     if (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error signing up',
-        description: error.message,
-      });
+      toast.error('Error signing up: ' + error.message);
     } else {
-      toast({
-        title: 'Account created!',
-        description: 'Welcome to Taste the World.',
-      });
+      toast.success('Account created! Welcome to Taste the World.');
       navigate('/');
     }
 
     setLoading(false);
+  };
+
+  const handleGoogleSignIn = async () => {
+    setSocialLoading('google');
+    const { error } = await signInWithGoogle();
+    
+    if (error) {
+      toast.error('Error signing in with Google: ' + error.message);
+    }
+    
+    setSocialLoading(null);
+  };
+
+  const handleAppleSignIn = async () => {
+    setSocialLoading('apple');
+    const { error } = await signInWithApple();
+    
+    if (error) {
+      toast.error('Error signing in with Apple: ' + error.message);
+    }
+    
+    setSocialLoading(null);
   };
 
   return (
@@ -75,6 +86,46 @@ const Auth = () => {
           <CardDescription>Discover amazing restaurants near you</CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Social Login Buttons */}
+          <div className="space-y-3 mb-6">
+            <Button
+              variant="outline"
+              className="w-full h-12"
+              onClick={handleGoogleSignIn}
+              disabled={socialLoading === 'google'}
+            >
+              {socialLoading === 'google' ? (
+                <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-2" />
+              ) : (
+                <Chrome className="w-5 h-5 mr-2" />
+              )}
+              Continue with Google
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="w-full h-12"
+              onClick={handleAppleSignIn}
+              disabled={socialLoading === 'apple'}
+            >
+              {socialLoading === 'apple' ? (
+                <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-2" />
+              ) : (
+                <Apple className="w-5 h-5 mr-2" />
+              )}
+              Continue with Apple
+            </Button>
+          </div>
+
+          <div className="relative mb-6">
+            <Separator />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="bg-background px-2 text-sm text-muted-foreground">
+                or continue with email
+              </span>
+            </div>
+          </div>
+
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
