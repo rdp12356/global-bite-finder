@@ -5,10 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar";
-import Index from "./pages/Index";
+import HomePage from "./pages/HomePage";
 import Auth from "./pages/Auth";
-import Favorites from "./pages/Favorites";
-import Preferences from "./pages/Preferences";
+import MarksInput from "./pages/MarksInput";
+import AptitudeTest from "./pages/AptitudeTest";
+import AICoach from "./pages/AICoach";
+import Recommendations from "./pages/Recommendations";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,10 +24,12 @@ const App = () => (
         <AuthProvider>
           <Navbar />
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route path="/preferences" element={<Preferences />} />
+            <Route path="/marks" element={<MarksInput />} />
+            <Route path="/aptitude-test" element={<AptitudeTest />} />
+            <Route path="/ai-coach" element={<AICoach />} />
+            <Route path="/recommendations" element={<Recommendations />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

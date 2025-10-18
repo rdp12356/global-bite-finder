@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { UtensilsCrossed } from 'lucide-react';
+import { GraduationCap, ArrowRight } from 'lucide-react';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -56,7 +56,7 @@ const Auth = () => {
     } else {
       toast({
         title: 'Account created!',
-        description: 'Welcome to Taste the World.',
+        description: 'Welcome to Zertainity! Let\'s start your academic journey.',
       });
       navigate('/');
     }
@@ -65,14 +65,14 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <UtensilsCrossed className="w-6 h-6 text-primary" />
+          <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+            <GraduationCap className="w-6 h-6 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold">Taste the World</CardTitle>
-          <CardDescription>Discover amazing restaurants near you</CardDescription>
+          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Zertainity</CardTitle>
+          <CardDescription>Your AI mentor for smarter academic choices</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
@@ -105,8 +105,9 @@ const Auth = () => {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" disabled={loading}>
                   {loading ? 'Signing in...' : 'Sign In'}
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </form>
             </TabsContent>
@@ -147,8 +148,9 @@ const Auth = () => {
                     minLength={6}
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" disabled={loading}>
                   {loading ? 'Creating account...' : 'Create Account'}
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </form>
             </TabsContent>
