@@ -9,6 +9,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { GraduationCap } from 'lucide-react';
+import { z } from 'zod';
+
+// Validation schemas for authentication
+const authSchema = z.object({
+  email: z.string()
+    .trim()
+    .email({ message: "Invalid email format" })
+    .max(255, { message: "Email must be less than 255 characters" }),
+  password: z.string()
+    .min(8, { message: "Password must be at least 8 characters" })
+    .max(128, { message: "Password must be less than 128 characters" })
+    .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+    .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
+    .regex(/[0-9]/, { message: "Password must contain at least one number" }),
+  fullName: z.string()
+    .trim()
+    .min(1, { message: "Name is required" })
+    .max(100, { message: "Name must be less than 100 characters" })
+});
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -21,6 +40,20 @@ const Auth = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate email and password
+    const signInSchema = authSchema.pick({ email: true, password: true });
+    const result = signInSchema.safeParse({ email, password });
+    
+    if (!result.success) {
+      toast({
+        variant: 'destructive',
+        title: 'Validation Error',
+        description: result.error.errors[0].message,
+      });
+      return;
+    }
+
     setLoading(true);
 
     const { error } = await signIn(email, password);
@@ -44,6 +77,19 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate all fields
+    const result = authSchema.safeParse({ email, password, fullName });
+    
+    if (!result.success) {
+      toast({
+        variant: 'destructive',
+        title: 'Validation Error',
+        description: result.error.errors[0].message,
+      });
+      return;
+    }
+
     setLoading(true);
 
     const { error } = await signUp(email, password, fullName);
@@ -198,11 +244,11 @@ const Auth = () => {
                   <Input
                     id="signup-password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder="Min. 8 chars, uppercase, lowercase, number"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    minLength={6}
+                    minLength={8}
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>

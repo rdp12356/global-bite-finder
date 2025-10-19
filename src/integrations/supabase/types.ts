@@ -7,535 +7,297 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "13.0.5"
+  }
   public: {
     Tables: {
-      students: {
+      cuisines: {
         Row: {
+          created_at: string | null
+          description: string | null
+          icon_name: string | null
           id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
           email: string | null
           full_name: string | null
-          avatar_url: string | null
-          date_of_birth: string | null
-          current_class: number | null
-          school_name: string | null
+          id: string
           location_city: string | null
-          location_state: string | null
           location_country: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          location_city?: string | null
+          location_country?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          location_city?: string | null
+          location_country?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      restaurant_cuisines: {
+        Row: {
+          cuisine_id: string | null
+          id: string
+          restaurant_id: string | null
+        }
+        Insert: {
+          cuisine_id?: string | null
+          id?: string
+          restaurant_id?: string | null
+        }
+        Update: {
+          cuisine_id?: string | null
+          id?: string
+          restaurant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "restaurant_cuisines_cuisine_id_fkey"
+            columns: ["cuisine_id"]
+            isOneToOne: false
+            referencedRelation: "cuisines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "restaurant_cuisines_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      restaurants: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          id: string
+          is_open: boolean | null
+          latitude: number | null
+          longitude: number | null
+          name: string
+          opening_date: string | null
           phone_number: string | null
-          parent_phone: string | null
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id: string
-          email?: string | null
-          full_name?: string | null
-          avatar_url?: string | null
-          date_of_birth?: string | null
-          current_class?: number | null
-          school_name?: string | null
-          location_city?: string | null
-          location_state?: string | null
-          location_country?: string | null
-          phone_number?: string | null
-          parent_phone?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          email?: string | null
-          full_name?: string | null
-          avatar_url?: string | null
-          date_of_birth?: string | null
-          current_class?: number | null
-          school_name?: string | null
-          location_city?: string | null
-          location_state?: string | null
-          location_country?: string | null
-          phone_number?: string | null
-          parent_phone?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      subjects: {
-        Row: {
-          id: string
-          name: string
-          category: string
-          description: string | null
-          created_at: string | null
-        }
-        Insert: {
-          id?: string
-          name: string
-          category: string
-          description?: string | null
-          created_at?: string | null
-        }
-        Update: {
-          id?: string
-          name?: string
-          category?: string
-          description?: string | null
-          created_at?: string | null
-        }
-        Relationships: []
-      }
-      student_marks: {
-        Row: {
-          id: string
-          student_id: string | null
-          subject_id: string | null
-          marks_obtained: number
-          max_marks: number
-          exam_type: string | null
-          exam_date: string | null
-          academic_year: string | null
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          student_id?: string | null
-          subject_id?: string | null
-          marks_obtained: number
-          max_marks: number
-          exam_type?: string | null
-          exam_date?: string | null
-          academic_year?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          student_id?: string | null
-          subject_id?: string | null
-          marks_obtained?: number
-          max_marks?: number
-          exam_type?: string | null
-          exam_date?: string | null
-          academic_year?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "student_marks_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "students"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "student_marks_subject_id_fkey"
-            columns: ["subject_id"]
-            isOneToOne: false
-            referencedRelation: "subjects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      aptitude_tests: {
-        Row: {
-          id: string
-          name: string
-          description: string | null
-          test_type: string
-          total_questions: number
-          time_limit_minutes: number | null
-          is_active: boolean | null
-          created_at: string | null
-        }
-        Insert: {
-          id?: string
-          name: string
-          description?: string | null
-          test_type: string
-          total_questions: number
-          time_limit_minutes?: number | null
-          is_active?: boolean | null
-          created_at?: string | null
-        }
-        Update: {
-          id?: string
-          name?: string
-          description?: string | null
-          test_type?: string
-          total_questions?: number
-          time_limit_minutes?: number | null
-          is_active?: boolean | null
-          created_at?: string | null
-        }
-        Relationships: []
-      }
-      aptitude_questions: {
-        Row: {
-          id: string
-          test_id: string | null
-          question_text: string
-          question_type: string | null
-          options: Json | null
-          correct_answer: number | null
-          difficulty_level: string | null
-          category: string | null
-          weight: number | null
-          created_at: string | null
-        }
-        Insert: {
-          id?: string
-          test_id?: string | null
-          question_text: string
-          question_type?: string | null
-          options?: Json | null
-          correct_answer?: number | null
-          difficulty_level?: string | null
-          category?: string | null
-          weight?: number | null
-          created_at?: string | null
-        }
-        Update: {
-          id?: string
-          test_id?: string | null
-          question_text?: string
-          question_type?: string | null
-          options?: Json | null
-          correct_answer?: number | null
-          difficulty_level?: string | null
-          category?: string | null
-          weight?: number | null
-          created_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "aptitude_questions_test_id_fkey"
-            columns: ["test_id"]
-            isOneToOne: false
-            referencedRelation: "aptitude_tests"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      student_aptitude_results: {
-        Row: {
-          id: string
-          student_id: string | null
-          test_id: string | null
-          score: number
-          max_score: number
-          percentage: number
-          time_taken_seconds: number | null
-          responses: Json | null
-          completed_at: string | null
-          created_at: string | null
-        }
-        Insert: {
-          id?: string
-          student_id?: string | null
-          test_id?: string | null
-          score: number
-          max_score: number
-          percentage: number
-          time_taken_seconds?: number | null
-          responses?: Json | null
-          completed_at?: string | null
-          created_at?: string | null
-        }
-        Update: {
-          id?: string
-          student_id?: string | null
-          test_id?: string | null
-          score?: number
-          max_score?: number
-          percentage?: number
-          time_taken_seconds?: number | null
-          responses?: Json | null
-          completed_at?: string | null
-          created_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "student_aptitude_results_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "students"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "student_aptitude_results_test_id_fkey"
-            columns: ["test_id"]
-            isOneToOne: false
-            referencedRelation: "aptitude_tests"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      ai_conversations: {
-        Row: {
-          id: string
-          student_id: string | null
-          session_id: string
-          messages: Json
-          emotional_analysis: Json | null
-          conversation_summary: string | null
-          started_at: string | null
-          completed_at: string | null
-          created_at: string | null
-        }
-        Insert: {
-          id?: string
-          student_id?: string | null
-          session_id: string
-          messages: Json
-          emotional_analysis?: Json | null
-          conversation_summary?: string | null
-          started_at?: string | null
-          completed_at?: string | null
-          created_at?: string | null
-        }
-        Update: {
-          id?: string
-          student_id?: string | null
-          session_id?: string
-          messages?: Json
-          emotional_analysis?: Json | null
-          conversation_summary?: string | null
-          started_at?: string | null
-          completed_at?: string | null
-          created_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ai_conversations_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "students"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      streams: {
-        Row: {
-          id: string
-          name: string
-          description: string | null
-          subjects: Json
-          career_paths: Json | null
-          icon: string | null
-          created_at: string | null
-        }
-        Insert: {
-          id?: string
-          name: string
-          description?: string | null
-          subjects: Json
-          career_paths?: Json | null
-          icon?: string | null
-          created_at?: string | null
-        }
-        Update: {
-          id?: string
-          name?: string
-          description?: string | null
-          subjects?: Json
-          career_paths?: Json | null
-          icon?: string | null
-          created_at?: string | null
-        }
-        Relationships: []
-      }
-      colleges: {
-        Row: {
-          id: string
-          name: string
-          location: string
-          state: string | null
-          country: string | null
-          type: string | null
-          category: string | null
+          photo_url: string | null
+          place_id: string | null
+          price_level: number | null
           rating: number | null
-          website_url: string | null
-          established_year: number | null
-          accreditation: string[] | null
-          facilities: Json | null
-          created_at: string | null
           updated_at: string | null
+          website: string | null
         }
         Insert: {
-          id?: string
-          name: string
-          location: string
-          state?: string | null
-          country?: string | null
-          type?: string | null
-          category?: string | null
-          rating?: number | null
-          website_url?: string | null
-          established_year?: number | null
-          accreditation?: string[] | null
-          facilities?: Json | null
+          address?: string | null
           created_at?: string | null
+          id?: string
+          is_open?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          opening_date?: string | null
+          phone_number?: string | null
+          photo_url?: string | null
+          place_id?: string | null
+          price_level?: number | null
+          rating?: number | null
           updated_at?: string | null
+          website?: string | null
         }
         Update: {
-          id?: string
-          name?: string
-          location?: string
-          state?: string | null
-          country?: string | null
-          type?: string | null
-          category?: string | null
-          rating?: number | null
-          website_url?: string | null
-          established_year?: number | null
-          accreditation?: string[] | null
-          facilities?: Json | null
+          address?: string | null
           created_at?: string | null
+          id?: string
+          is_open?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          opening_date?: string | null
+          phone_number?: string | null
+          photo_url?: string | null
+          place_id?: string | null
+          price_level?: number | null
+          rating?: number | null
           updated_at?: string | null
+          website?: string | null
         }
         Relationships: []
       }
-      courses: {
+      taste_preferences: {
         Row: {
-          id: string
-          college_id: string | null
-          name: string
-          stream_id: string | null
-          duration_years: number | null
-          degree_type: string | null
-          eligibility_criteria: Json | null
-          fee_structure: Json | null
-          cutoff_percentage: number | null
-          seats_available: number | null
-          is_active: boolean | null
           created_at: string | null
+          cuisine_id: string | null
+          dietary_restrictions: string[] | null
+          id: string
+          is_vegan: boolean | null
+          is_vegetarian: boolean | null
+          preference_level: number | null
+          spice_level: number | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
-          id?: string
-          college_id?: string | null
-          name: string
-          stream_id?: string | null
-          duration_years?: number | null
-          degree_type?: string | null
-          eligibility_criteria?: Json | null
-          fee_structure?: Json | null
-          cutoff_percentage?: number | null
-          seats_available?: number | null
-          is_active?: boolean | null
           created_at?: string | null
+          cuisine_id?: string | null
+          dietary_restrictions?: string[] | null
+          id?: string
+          is_vegan?: boolean | null
+          is_vegetarian?: boolean | null
+          preference_level?: number | null
+          spice_level?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
-          id?: string
-          college_id?: string | null
-          name?: string
-          stream_id?: string | null
-          duration_years?: number | null
-          degree_type?: string | null
-          eligibility_criteria?: Json | null
-          fee_structure?: Json | null
-          cutoff_percentage?: number | null
-          seats_available?: number | null
-          is_active?: boolean | null
           created_at?: string | null
+          cuisine_id?: string | null
+          dietary_restrictions?: string[] | null
+          id?: string
+          is_vegan?: boolean | null
+          is_vegetarian?: boolean | null
+          preference_level?: number | null
+          spice_level?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "courses_college_id_fkey"
-            columns: ["college_id"]
+            foreignKeyName: "taste_preferences_cuisine_id_fkey"
+            columns: ["cuisine_id"]
             isOneToOne: false
-            referencedRelation: "colleges"
+            referencedRelation: "cuisines"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "courses_stream_id_fkey"
-            columns: ["stream_id"]
+            foreignKeyName: "taste_preferences_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "streams"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      student_recommendations: {
+      user_favorites: {
         Row: {
-          id: string
-          student_id: string | null
-          recommendation_type: string
-          recommended_id: string
-          confidence_score: number
-          reasons: Json
-          ai_analysis: Json | null
-          is_accepted: boolean | null
-          feedback: string | null
           created_at: string | null
+          id: string
+          restaurant_id: string | null
+          user_id: string | null
         }
         Insert: {
-          id?: string
-          student_id?: string | null
-          recommendation_type: string
-          recommended_id: string
-          confidence_score: number
-          reasons: Json
-          ai_analysis?: Json | null
-          is_accepted?: boolean | null
-          feedback?: string | null
           created_at?: string | null
+          id?: string
+          restaurant_id?: string | null
+          user_id?: string | null
         }
         Update: {
-          id?: string
-          student_id?: string | null
-          recommendation_type?: string
-          recommended_id?: string
-          confidence_score?: number
-          reasons?: Json
-          ai_analysis?: Json | null
-          is_accepted?: boolean | null
-          feedback?: string | null
           created_at?: string | null
+          id?: string
+          restaurant_id?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "student_recommendations_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "user_favorites_restaurant_id_fkey"
+            columns: ["restaurant_id"]
             isOneToOne: false
-            referencedRelation: "students"
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_favorites_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      interest_areas: {
+      user_reviews: {
         Row: {
-          id: string
-          name: string
-          description: string | null
-          related_streams: Json | null
-          related_careers: Json | null
-          icon: string | null
           created_at: string | null
+          dishes_tried: string[] | null
+          id: string
+          rating: number | null
+          restaurant_id: string | null
+          review_text: string | null
+          updated_at: string | null
+          user_id: string | null
+          would_recommend: boolean | null
         }
         Insert: {
-          id?: string
-          name: string
-          description?: string | null
-          related_streams?: Json | null
-          related_careers?: Json | null
-          icon?: string | null
           created_at?: string | null
+          dishes_tried?: string[] | null
+          id?: string
+          rating?: number | null
+          restaurant_id?: string | null
+          review_text?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          would_recommend?: boolean | null
         }
         Update: {
-          id?: string
-          name?: string
-          description?: string | null
-          related_streams?: Json | null
-          related_careers?: Json | null
-          icon?: string | null
           created_at?: string | null
+          dishes_tried?: string[] | null
+          id?: string
+          rating?: number | null
+          restaurant_id?: string | null
+          review_text?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          would_recommend?: boolean | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_reviews_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
