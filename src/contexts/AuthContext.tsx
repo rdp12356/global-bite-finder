@@ -1,14 +1,18 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import authService from '@/services/authService';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signInWithGoogle: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   loading: boolean;
+  userProfile: any;
+  updateProfile: (updates: any) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,22 +20,41 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          // Create or update user profile
+          await authService.createUserProfile(session.user);
+          // Load user profile
+          const { data: profile } = await authService.getUserProfile(session.user.id);
+          setUserProfile(profile);
+        } else {
+          setUserProfile(null);
+        }
+        
         setLoading(false);
       }
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        // Load user profile
+        const { data: profile } = await authService.getUserProfile(session.user.id);
+        setUserProfile(profile);
+      }
+      
       setLoading(false);
     });
 
@@ -64,12 +87,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { error };
   };
 
+  const signInWithGoogle = async () => {
+    const { error } = await authService.signInWithGoogle();
+    return { error };
+  };
+
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await authService.signOut();
+    setUserProfile(null);
+  };
+
+  const updateProfile = async (updates: any) => {
+    if (!user) return { error: new Error('No user logged in') };
+    
+    const { data, error } = await authService.updateUserProfile(user.id, updates);
+    if (data) {
+      setUserProfile(data);
+    }
+    return { error };
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, signUp, signIn, signOut, loading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      signUp, 
+      signIn, 
+      signInWithGoogle, 
+      signOut, 
+      loading, 
+      userProfile, 
+      updateProfile 
+    }}>
       {children}
     </AuthContext.Provider>
   );
